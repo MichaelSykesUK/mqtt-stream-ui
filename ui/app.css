@@ -1,0 +1,252 @@
+:root{
+  --bg:#0b0f14; --card:#121821; --muted:#8aa0b4; --text:#e6f1ff;
+  --ok:#42d392; --accent:#60a5fa; --warn:#f59e0b; --danger:#ef4444;
+  --radius:16px; --chip:#0e1722; --chip-border:#1e293b;
+  --pad:16px;
+}
+body.light{
+  --bg:#f7fafc; --card:#ffffff; --text:#0b1220; --muted:#5b7089;
+  --chip:#e8eef6; --chip-border:#cbd5e1; background:#eef2f7;
+}
+*{box-sizing:border-box}
+html,body{height:100%; overflow:hidden}
+body{
+  margin:0;padding:var(--pad);color:var(--text);
+  background:radial-gradient(1200px 600px at 10% -10%, #12202f 0%, #0b0f14 50%) fixed;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji"
+}
+body.light{ background:#eef2f7 }
+
+/* ───────── Header ───────── */
+header#hdr{
+  display:flex; align-items:center; gap:10px; margin-bottom:var(--pad); min-width:0;
+}
+#hdr .conn{
+  flex:0 0 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  padding:8px 12px;border-radius:999px;border:1px solid var(--chip-border);
+  background:var(--chip);color:var(--muted);font-size:13px
+}
+.spacer{flex:1}
+
+/* Buttons — larger for touch */
+button{
+  border:1px solid var(--chip-border);
+  background:linear-gradient(180deg, rgba(26,36,51,.9) 0%, rgba(17,24,39,.9) 100%);
+  color:var(--text); padding:10px 14px; border-radius:12px; cursor:pointer; font-size:14px;
+  font-weight:700;
+}
+body.light button{ background:linear-gradient(180deg,#ffffff 0%,#f3f4f6 100%) }
+button:hover{ transform:none }
+
+/* Tiny status dot */
+.statusdot{width:14px;height:14px;border-radius:999px;border:1px solid var(--chip-border); background:#475569}
+.statusdot.ok{   background:#10b981 }
+.statusdot.warn{ background:#f59e0b }
+.statusdot.bad{  background:#ef4444 }
+
+/* ───────── Layout ───────── */
+/* Give the left column a larger guaranteed min width so the compass never gets squished.
+   The map (right col) will yield first. */
+.layout{
+  --header-h:72px;
+  height:calc(100vh - var(--header-h) - 8px);
+  display:grid;
+  grid-template-columns: minmax(680px, 2fr) minmax(520px, 3fr);
+  gap:var(--pad);align-items:stretch;overflow:hidden
+}
+@media (max-width:1200px){
+  .layout{ grid-template-columns:minmax(620px, 2fr) minmax(420px, 3fr); }
+}
+@media (max-width:1000px){
+  .layout{ grid-template-columns:1fr; }
+}
+/* .leftcol,.rightcol{height:100%;overflow:hidden;gap:20px} */
+
+/* replace the current line with these */
+.leftcol{
+  height:100%;
+  display:flex;              /* NEW: gap now works */
+  flex-direction:column;     /* vertical stacking of cards */
+  gap: var(--pad);           /* the spacing between cards */
+  overflow:hidden;             /* keep it scrollable */
+}
+
+.rightcol{
+  height:100%;
+  overflow:hidden;             /* match previous behavior */
+}
+
+.card{
+  background:var(--card);backdrop-filter:blur(6px);
+  border:1px solid rgba(100,116,139,0.15);border-radius:var(--radius);
+  padding:var(--pad);box-shadow:0 8px 24px rgba(0,0,0,.15)
+}
+body.light .card{ box-shadow:none; backdrop-filter:none; border-color:#e5e7eb; background:var(--card) }
+.map-card{height:100%; display:flex}
+.rightcol{ padding-bottom:var(--pad); } /* keep a nice bottom padding */
+
+.card h3{margin:0 0 8px 0;font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.02em;text-transform:uppercase}
+
+/* ───────── Left stack (labels/values) ───────── */
+.stack-left{
+  --label-w: 110px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  /* width:200px;  <-- delete this line */
+}
+
+.line{ display:flex; align-items:baseline; gap:10px; }
+.line .label{ width:var(--label-w); font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em }
+.line .val{ font-weight:800; font-size:24px; }
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.unit{font-size:12px;color:var(--muted)}
+
+/* Row layout: left stack + right instruments */
+.row.two{
+  display:grid;
+  grid-template-columns: auto 1fr;  /* left stack gets its natural width, instruments get the rest */
+  gap: var(--pad);
+  align-items:center;
+}
+
+/* ───────── Instruments column ───────── */
+/* Keep items on one line, don’t allow shrinking (prevents compass squash). */
+.gaugesrow{
+  display:flex; flex-direction:row; align-items:center; gap:14px;
+  min-width: 420px;
+}
+.gaugesrow > *{ flex: 0 0 auto; }  /* prevent shrinking */
+
+/* ───────── Map ───────── */
+#map{width:100%;height:100%;min-height:480px;border-radius:12px;overflow:hidden}
+
+/* ───────── Compass ───────── */
+.compass{
+  position:relative;width:118px;height:118px;min-width:118px;min-height:118px;border-radius:999px;
+  border:1px solid rgba(100,116,139,.25);background:conic-gradient(from 0deg,#0f1623,#0c121b);
+  display:grid;place-items:center;box-shadow:inset 0 0 30px rgba(0,0,0,.25)
+}
+body.light .compass{background:conic-gradient(from 0deg,#eef2f7,#e5e7eb)}
+.compass .ring{position:absolute;inset:8px;border-radius:999px;border:1px dashed rgba(148,163,184,.25)}
+.compass .ticks{position:absolute;inset:0}
+.compass .ticks::before,.compass .ticks::after{content:"";position:absolute;left:50%;top:0;width:2px;height:100%;
+  background:rgba(148,163,184,.3);transform:translateX(-50%)}
+.compass .ticks::after{transform:translateX(-50%) rotate(90deg)}
+.compass .labels{position:absolute;inset:0;display:grid;place-items:center;color:#94a3b8;font-size:11px}
+body.light .compass .labels{color:#74839a}
+.compass .labels span{position:absolute}.labels .N{top:4px}.labels .S{bottom:4px}.labels .E{right:6px}.labels .W{left:6px}
+.compass .needle{
+  position:absolute;left:50%;top:50%;width:4px;height:46%;
+  border-radius:2px;transform-origin:top center;
+  transform:translate(-50%,0) rotate(calc(var(--angle, 0deg) + 180deg));
+  box-shadow:0 0 12px rgba(96,165,250,.25)
+}
+.compass.veh  .needle{background:linear-gradient(180deg,#7dd3fc 0%,#60a5fa 60%,transparent 60%)}
+.compass.ac2  .needle{background:linear-gradient(180deg,#fda4af 0%,#f87171 60%,transparent 60%)}
+.compass.wind .needle{background:linear-gradient(180deg,#fde68a 0%,#f59e0b 60%,transparent 60%)}
+.pivot{position:absolute;left:50%;top:50%;width:10px;height:10px;transform:translate(-50%,-50%);
+  background:var(--card);border:2px solid #1f2b3a;border-radius:999px}
+body.light .pivot{border-color:#cbd5e1}
+
+/* ───────── Map markers ───────── */
+.marker{width:28px;height:28px;transform:translate(-50%, -50%);pointer-events:none}
+.marker .arrow{
+  width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:18px solid #60a5fa;
+  transform-origin:50% 75%;transform:rotate(0deg);margin:-2px auto 0 auto
+}
+.marker.ac2 .arrow{border-bottom-color:#f87171}
+
+/* ───────── Gauges (SVG) ───────── */
+.gauge{width:230px;height:132px;display:block;overflow:visible}
+.gauge .track{stroke:rgba(148,163,184,.25);stroke-width:10;fill:none;stroke-linecap:round}
+.gauge .zone-green{stroke:#22c55e;stroke-width:10;fill:none;stroke-linecap:round}
+.gauge .zone-amber{stroke:#f59e0b;stroke-width:10;fill:none;stroke-linecap:round}
+.gauge .zone-red{stroke:#ef4444;stroke-width:10;fill:none;stroke-linecap:round}
+.gauge .band-red{stroke:#ef4444;stroke-width:10;fill:none;stroke-linecap:round;opacity:.35}
+.gauge .needle{ stroke:#e5e7eb; stroke-width:3.5; stroke-linecap:round }
+body.light .gauge .needle{ stroke:#1f2937 }
+.gauge .ticks .tick{ stroke: rgba(148,163,184,.35); stroke-width: 2 }
+.gauge .ticks .tick.major{ stroke-width: 2.5 }
+.gauge .tick-label{ font: 11px ui-monospace, monospace; fill: var(--muted) }
+
+/* ───────── Altimeter ───────── */
+.altcol{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:110px;
+}
+
+.altimeter{
+  --pct:0;
+  position:relative;
+  width:22px; height:170px;
+  border-radius:12px;
+  border:1px solid rgba(100,116,139,.25);
+  background:linear-gradient(180deg,#0f1623,#0c121b);
+  overflow:visible;
+}
+body.light .altimeter{ background:#f3f4f6; border-color:#e5e7eb }
+
+/* Altimeter — consistent label alignment and inset fill */
+.altimeter{
+  --alt-bw: 1px;                 /* border width (keep in sync with the border) */
+  position:relative;
+  width:22px; height:170px;
+  border-radius:12px;
+  border: var(--alt-bw) solid rgba(100,116,139,.25);
+  background:linear-gradient(180deg,#0f1623,#0c121b);
+  overflow:visible;              /* labels can sit outside */
+}
+
+/* Keep the liquid fill INSIDE the border by insetting it by the border width */
+.altimeter .altfill{
+  position:absolute;
+  left:  var(--alt-bw);
+  right: var(--alt-bw);
+  bottom:var(--alt-bw);
+  width:auto;
+  /* height = % of INNER height (subtract the top+bottom inset) */
+  height: max(0%, calc(var(--pct)*1% - (2 * var(--alt-bw))));
+  background:linear-gradient(180deg,#60a5fa,#2563eb);
+  border-radius: calc(12px - var(--alt-bw));   /* nice rounded corners */
+  z-index:0;
+}
+
+/* Labels to the RIGHT — anchored from the bar’s right edge for both top & bottom */
+.altimeter .alt-label{
+  position:absolute;
+  left:100%;                     /* start at the right edge of the bar */
+  margin-left:12px;              /* fixed gap to the bar */
+  font-size:11px;
+  color:var(--muted);
+  line-height:1;
+  white-space:nowrap;
+  z-index:1;
+}
+.altimeter .alt-label::before{
+  content:"";
+  position:absolute;
+  left:-10px;                    /* small tick touching the bar */
+  top:50%;
+  transform:translateY(-50%);
+  width:8px; height:1.5px;
+  background:rgba(148,163,184,.6);
+}
+/* Top at the very top edge, bottom at the very bottom edge; symmetric transforms */
+.altimeter .alt-label.max{ top:0;    transform:translateY(-50%); }
+.altimeter .alt-label.min{ bottom:0; transform:translateY( 50%); }
+
+
+
+
+/* ───────── Logs overlay ───────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50}
+.overlay.hidden{display:none}
+.sheet{width:min(1000px,92vw);height:min(70vh,640px);background:rgba(15,23,42,.95);border:1px solid rgba(100,116,139,.25);
+  border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden}
+body.light .sheet{background:#ffffff;border-color:#cbd5e1}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(100,116,139,.2)}
+body.light .sheet-head{border-color:#e5e7eb}
+#log{white-space:pre;flex:1;overflow:auto;padding:12px}

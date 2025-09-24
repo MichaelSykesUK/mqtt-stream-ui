@@ -1,0 +1,7 @@
+user edge-van-1
+topic write airchase/van-1/telemetry/#
+topic read  airchase/van-1/cmd/#
+
+user tablet1
+topic read  airchase/van-1/telemetry/#
+topic write airchase/van-1/cmd/#

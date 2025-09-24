@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Airchase Live</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="app.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+</head>
+<body class="hide-avg">
+  <header id="hdr">
+    <button id="connectToggle">Connect</button>
+    <div id="status" class="statusdot" title="Connection status"></div>
+
+    <div id="connInfo" class="conn"></div>
+    <div class="spacer"></div>
+
+    <button id="logsBtn">Logs</button>
+    <button id="animBtn" title="Toggle animation mode">Anim: Soft</button>
+    <button id="aggBtn"  title="Aggregation mode">Agg: Normal</button>
+    <button id="speedUnitBtn" title="Cycle speed unit">Speed: kn</button>
+    <button id="tempUnitBtn" title="Cycle temperature unit">Temp: °C</button>
+    <button id="altUnitBtn"  title="Cycle altitude unit">Alt: m</button>
+    <button id="themeBtn" title="Toggle light/dark">Light</button>
+  </header>
+
+  <section class="layout" id="layout">
+    <div class="leftcol">
+      <!-- Pace Vehicle -->
+      <div class="card">
+        <h3>Pace Vehicle</h3>
+        <div class="row two">
+          <!-- LEFT: stacked fields -->
+          <div class="stack-left">
+            <div class="line">
+              <span class="label">Speed</span>
+              <span class="val mono"><span id="vehSpeedVal">—</span> <span class="unit speedUnit">kn</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Altitude</span>
+              <span class="val mono"><span id="vehAltVal">—</span> <span class="unit altUnit">m</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Heading</span>
+              <span class="val mono"><span id="vehHdgVal">—</span> <span class="unit">°</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Latitude</span>
+              <span class="val mono" id="vehLat">—</span>
+            </div>
+            <div class="line">
+              <span class="label">Longitude</span>
+              <span class="val mono" id="vehLon">—</span>
+            </div>
+          </div>
+
+          <!-- RIGHT: gauge | altimeter | compass (single row, no wrap) -->
+          <div class="gaugesrow">
+            <div class="gauge-wrap">
+              <svg id="vehGauge" class="gauge" viewBox="0 0 200 120" aria-label="Vehicle speed gauge"></svg>
+            </div>
+
+            <div class="compass veh" aria-label="Vehicle heading">
+              <div class="ring"></div>
+              <div class="ticks"></div>
+              <div class="labels"><span class="N">N</span><span class="E">E</span><span class="S">S</span><span class="W">W</span></div>
+              <div class="needle" id="vehNeedle"></div>
+              <div class="pivot"></div>
+            </div>
+
+            <div class="altcol">
+              <div class="altimeter" id="vehAltBar" aria-label="Altitude 0–1000 m">
+                <div class="altfill"></div>
+                <div class="altmarker" id="vehAltMarker"></div>
+                <div class="alt-label min" id="vehAltMinLbl">0</div>
+                <div class="alt-label max" id="vehAltMaxLbl">1000 m</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- AC2 -->
+      <div class="card">
+        <h3>VA-1X AC2</h3>
+        <div class="row two">
+          <div class="stack-left">
+            <div class="line">
+              <span class="label">Speed</span>
+              <span class="val mono"><span id="ac2SpeedVal">—</span> <span class="unit speedUnit">kn</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Altitude</span>
+              <span class="val mono"><span id="ac2AltVal">—</span> <span class="unit altUnit">m</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Heading</span>
+              <span class="val mono"><span id="ac2HdgVal">—</span> <span class="unit">°</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Latitude</span>
+              <span class="val mono" id="ac2Lat">—</span>
+            </div>
+            <div class="line">
+              <span class="label">Longitude</span>
+              <span class="val mono" id="ac2Lon">—</span>
+            </div>
+          </div>
+
+          <div class="gaugesrow">
+            <div class="gauge-wrap">
+              <svg id="ac2Gauge" class="gauge" viewBox="0 0 200 120" aria-label="AC2 speed gauge"></svg>
+            </div>
+
+            <div class="compass ac2" aria-label="AC2 heading">
+              <div class="ring"></div>
+              <div class="ticks"></div>
+              <div class="labels"><span class="N">N</span><span class="E">E</span><span class="S">S</span><span class="W">W</span></div>
+              <div class="needle" id="ac2Needle"></div>
+              <div class="pivot"></div>
+            </div>
+
+            <div class="altcol">
+              <div class="altimeter" id="ac2AltBar" aria-label="Altitude 0–1000 m">
+                <div class="altfill"></div>
+                <div class="altmarker" id="ac2AltMarker"></div>
+                <div class="alt-label min" id="ac2AltMinLbl">0</div>
+                <div class="alt-label max" id="ac2AltMaxLbl">1000 m</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Weather -->
+      <div class="card">
+        <h3>Pace Vehicle Weather</h3>
+        <div class="row two">
+          <div class="stack-left">
+            <div class="line">
+              <span class="label">Temperature</span>
+              <span class="val mono"><span id="tempVal">—</span> <span class="unit tempUnit">°C</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Wind Speed</span>
+              <span class="val mono"><span id="windVal">—</span> <span class="unit speedUnit">kn</span></span>
+            </div>
+            <div class="line">
+              <span class="label">Wind Direction</span>
+              <span class="val mono"><span id="winddirVal">—</span> <span class="unit">°</span></span>
+            </div>
+          </div>
+
+          <div class="gaugesrow">
+            <div class="gauge-wrap">
+              <svg id="windGauge" class="gauge" viewBox="0 0 200 120" aria-label="Wind speed gauge"></svg>
+            </div>
+
+            <div class="compass wind" aria-label="Wind direction">
+              <div class="ring"></div>
+              <div class="ticks"></div>
+              <div class="labels"><span class="N">N</span><span class="E">E</span><span class="S">S</span><span class="W">W</span></div>
+              <div class="needle" id="windNeedle"></div>
+              <div class="pivot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Map -->
+    <div class="rightcol">
+      <div class="card map-card">
+        <div id="map" aria-label="Map"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logs overlay -->
+  <div id="logsOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Logs">
+    <div class="sheet">
+      <div class="sheet-head">
+        <span>Raw fused messages</span>
+        <button id="closeLogs">Close</button>
+      </div>
+      <pre id="log" class="mono"></pre>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>

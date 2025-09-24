@@ -1,0 +1,7 @@
+paho-mqtt>=1.6.1       # MQTT client
+
+# Optional add-ons:
+# pyserial>=3.5         # talk to serial/NMEA sensors
+# cbor2>=5.4.6          # smaller-than-JSON payloads
+# protobuf>=5.28.0      # if you switch to Protobuf
+# pydantic>=2.8.2       # validate/shape payloads
